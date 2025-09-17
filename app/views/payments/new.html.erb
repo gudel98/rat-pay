@@ -1,0 +1,75 @@
+<div class="w-full flex items-center justify-center bg-gray p-6">
+  <div class="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div class="payment-form">
+
+      <div class="flex justify-between items-center">
+        <span class="font-semibold text-lg tracking-widest">RATPAY</span>
+        <img class="h-12 w-12 object-contain"
+             src="https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"
+             alt="Card Logo">
+      </div>
+
+      <div class="mt-8">
+        <label class="text-xs uppercase opacity-70" for="card_number">Card Number</label>
+        <input type="text" id="card_number" name="card_number" maxlength="19" placeholder="1234 5678 9012 3456"
+               value="4200 0000 0000 0000" readonly class="card-number" />
+      </div>
+
+      <div class="flex justify-between mt-6 items-end">
+        <div class="card-fields">
+          <label class="text-xs uppercase opacity-70" for="card_name">Card Holder</label>
+          <input type="text" id="card_name" name="card_name" placeholder="JANE DOE"
+                 value="JOHN DOE" readonly 
+                 class="card-field w-full" />
+        </div>
+        <div class="card-fields">
+          <label class="text-xs uppercase opacity-70" for="expiry">Expiry</label>
+          <input type="text" id="expiry" name="expiry" maxlength="5" placeholder="MM/YY"
+                 value="12/35" readonly data-controller="expiry"
+                 class="card-field w-24" />
+        </div>
+        <div class="card-fields">
+          <label class="text-xs uppercase opacity-70" for="cvc">CVC</label>
+          <input type="text" id="cvc" name="cvc" maxlength="4" placeholder="123"
+                 data-controller="cvc"
+                 class="card-field w-20" />
+        </div>
+      </div>
+    </div>
+
+    <%= turbo_frame_tag "payment_modal" do %>
+      <form data-controller="payment" action="payments/create" method="post" data-turbo="true">
+        <div class="bg-white rounded-2xl shadow-lg p-8 flex flex-col justify-between h-80">
+          <h2 class="text-2xl font-semibold mb-6 text-gray-800">Cheese Pizza</h2>
+
+          <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Select Pizza Size</label>
+          <select id="amount" name="amount" class="pizza-selector">
+            <option value="2000">Medium - 20€ (successful)</option>
+            <option value="3000">Large - 30€ (declined)</option>
+            <option value="100">XXL - 1€ (failed by anti-fraud)</option>
+          </select>
+
+          <input hidden name="currency" value="EUR">
+
+          <button type="submit" class="payment-button" id="payment-button">Pay Now</button>
+        </div>
+      </form>
+    <% end %>
+  </div>
+</div>
+
+<%= javascript_tag nonce: true do %>
+  document.addEventListener("turbo:submit-start", (event) => {
+    const form = event.target
+    const button = form.querySelector("#payment-button")
+    if (button) {
+      button.disabled = true
+      button.innerHTML = `
+        <div class="flex items-center space-x-2 opacity-70">
+          <div class="animate-spin-slow"></div>
+          <span>Processing...</span>
+        </div>
+              `
+    }
+  })
+<% end %>

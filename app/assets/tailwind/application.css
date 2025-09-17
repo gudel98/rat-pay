@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+.payment-form {
+  @apply relative rounded-2xl shadow-2xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-8 text-white flex flex-col justify-between h-80;
+}
+
+.card-number {
+  @apply mt-1 w-full bg-transparent border-b border-white text-white font-mono text-xl tracking-widest focus:outline-none placeholder-white/70;
+}
+
+.card-fields {
+  @apply flex flex-col ml-4;
+}
+
+.card-field {
+  @apply mt-1 bg-transparent border-b border-white text-white font-medium focus:outline-none placeholder-white/70;
+}
+
+.pizza-selector {
+  @apply mt-1 block w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500;
+}
+
+.payment-button {
+  @apply w-full py-3 px-4 mt-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg transition transform hover:scale-105;
+}
+
+.close-button {
+  @apply mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400;
+}
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  @apply w-5 h-5 border-4 border-t-4 border-blue-200 border-t-blue-600 rounded-full;
+  animation: spin-slow 1s linear infinite;
+}
