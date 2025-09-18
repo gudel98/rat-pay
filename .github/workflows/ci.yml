@@ -85,6 +85,12 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Run DB migrations
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432
+        run: bin/rails db:migrate
+
       - name: Unit testing via rspec
         env:
           RAILS_ENV: test
