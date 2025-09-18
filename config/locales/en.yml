@@ -26,3 +26,6 @@
 #     en:
 #       "yes": yup
 #       enabled: "ON"
+
+en:
+  pay_button: "Pay Now"
