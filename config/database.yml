@@ -1,0 +1,38 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  host: 127.0.0.1
+  database: rat_pay_app_development
+  username: rat_pay
+  password: rat_password
+
+test:
+  <<: *default
+  host: 127.0.0.1
+  database: rat_pay_app_test
+  username: rat_pay
+  password: rat_password
+
+production:
+  primary: &primary_production
+    <<: *default
+    host: <%= ENV['DATABASE_HOST'] %>
+    database: <%= ENV['DATABASE_NAME'] %>
+    username: <%= ENV['DATABASE_USER'] %>
+    password: <%= ENV['DATABASE_PASSWORD'] %>
+  cable:
+    <<: *primary_production
+    database: <%= ENV['DATABASE_NAME'] %>
+    migrations_paths: db/cable_migrate
+  cache:
+    <<: *primary_production
+    database: <%= ENV['DATABASE_NAME'] %>
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *primary_production
+    database: <%= ENV['DATABASE_NAME'] %>
+    migrations_paths: db/queue_migrate
