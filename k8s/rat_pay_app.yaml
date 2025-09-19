@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rat-pay-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rat-pay-app
+  template:
+    metadata:
+      labels:
+        app: rat-pay-app
+    spec:
+      containers:
+        - name: rat-pay-app
+          image: rat_pay_app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          env:
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: rails-secret-key
+                  key: SECRET_KEY_BASE
+            - name: DATABASE_HOST
+              value: postgres
+            - name: DATABASE_NAME
+              value: rat_pay
+            - name: DATABASE_USER
+              value: rat_user
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-password
+                  key: DATABASE_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rat-pay-app
+spec:
+  selector:
+    app: rat-pay-app
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
