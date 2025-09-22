@@ -33,7 +33,11 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
-/config/database.yml
+# Ignore secrets stored by k8s
+/k8s/secrets/database_password
+/k8s/secrets/secret_key_base
+/k8s/secrets/ingress_tls_certs/rails-tls.*
+/k8s/secrets.yaml
 
 /app/assets/builds/*
 !/app/assets/builds/.keep

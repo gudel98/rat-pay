@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rat-pay-ingress
+  namespace: default
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - rat-pay.local
+      secretName: rails-tls
+  rules:
+    - host: rat-pay.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rat-pay-app
+                port:
+                  number: 3000

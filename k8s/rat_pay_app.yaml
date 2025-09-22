@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rat-pay-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rat-pay-app
+  template:
+    metadata:
+      labels:
+        app: rat-pay-app
+    spec:
+      containers:
+        - name: rat-pay-app
+          image: rat_pay_app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: rat-pay-config
+            - secretRef:
+                name: rails-secret-key
+            - secretRef:
+                name: database-password
+        - name: rat-pay-app-karafka-consumer
+          image: rat_pay_app:latest
+          imagePullPolicy: Never
+          workingDir: /rails
+          command: ["/bin/sh", "-c"]
+          args: ["exec bundle exec karafka server 2>&1"]
+          envFrom:
+            - configMapRef:
+                name: rat-pay-config
+            - secretRef:
+                name: rails-secret-key
+            - secretRef:
+                name: database-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rat-pay-app
+spec:
+  selector:
+    app: rat-pay-app
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
