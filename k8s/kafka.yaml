@@ -18,6 +18,7 @@ spec:
       containers:
         - name: kafka
           image: bitnami/kafka:latest
+          imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_CLUSTER_ID
               value: "XqdhYH4KRVy8W_948FAv0A"
@@ -30,7 +31,7 @@ spec:
             - name: KAFKA_CFG_LISTENERS
               value: "PLAINTEXT://:9093,CONTROLLER://:9094"
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://192.168.49.2:30093"
+              value: "PLAINTEXT://kafka:9093"
             - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
               value: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
             - name: KAFKA_CFG_CONTROLLER_QUORUM_VOTERS
@@ -41,6 +42,8 @@ spec:
               value: "-Xmx1024m -Xms512m"
             - name: KAFKA_CFG_LOG_LEVEL
               value: "DEBUG"
+            - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"
           ports:
             - containerPort: 9093
             - containerPort: 9094
@@ -59,13 +62,11 @@ metadata:
 spec:
   selector:
     app: kafka
-  type: NodePort
   ports:
     - protocol: TCP
       name: kafka-client
       port: 9093
       targetPort: 9093
-      nodePort: 30093
     - protocol: TCP
       name: kafka-controller
       port: 9094

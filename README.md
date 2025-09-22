@@ -31,6 +31,7 @@ minikube kubectl -- apply k8s/secrets.yaml
 ```bash
 docker build -t rat_pay_app:latest .
 minikube kubectl -- apply k8s/postgres.yaml
+minikube kubectl -- apply k8s/rat_pay_config.yaml
 minikube kubectl -- apply k8s/rat_pay_app.yaml
 minikube kubectl -- apply k8s/rat_pay_app_ingress.yaml
 

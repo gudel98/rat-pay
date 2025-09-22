@@ -20,36 +20,6 @@ RSpec.describe Transaction, type: :model do
     end
   end
 
-  describe "#verify!" do
-    let(:transaction) { create(:transaction, amount: 100, currency: "USD") }
-    let(:verification_response) { { status: "verified" } }
-
-    subject { transaction.verify! }
-
-    it "calls AntiFraudService with the transaction" do
-      expect(AntiFraudService).to receive(:call)
-        .with(transaction)
-        .and_return(verification_response)
-
-      subject
-
-      expect(transaction.status).to eq("verified")
-    end
-  end
-
-  describe "#process!" do
-    let(:transaction) { create(:transaction, amount: 100, currency: "USD") }
-    let(:processing_response) { { status: "processed" } }
-
-    subject { transaction.process!(processing_response) }
-
-    it "updates the status from the given processing response" do
-      subject
-
-      expect(transaction.status).to eq("processed")
-    end
-  end
-
   describe "#verified?" do
     let(:verified_txn) { build(:transaction, status: "verified") }
     let(:pending_txn)  { build(:transaction, status: "pending") }

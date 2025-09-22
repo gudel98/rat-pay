@@ -5,6 +5,7 @@ RSpec.describe ProcessingService do
 
   before do
     allow_any_instance_of(described_class).to receive(:sleep) # fast specs
+    allow_any_instance_of(WaterDrop::Producer).to receive(:produce_sync)
     allow(Transaction).to receive(:create!).with(params).and_return(transaction_double)
   end
 
@@ -12,46 +13,43 @@ RSpec.describe ProcessingService do
     subject { described_class.call(params) }
 
     context "when transaction is verified" do
-      let(:transaction_double) { instance_double("Transaction",
-                                                 verify!: { status: "verified" },
-                                                 verified?: true,
-                                                 process!:  nil) }
+      let(:transaction_double) { instance_double("Transaction", id: 1, verified?: true, update: nil) }
       let(:amount) { 2000 }
       let(:successful_response) { { status: "successful", message: "Transaction complete." } }
+
+      before { allow(AntiFraudService).to receive(:call).and_return({ status: "verified" }) }
 
       it "processes with acquirer and updates transaction" do
         result = subject
 
         expect(Transaction).to have_received(:create!).with(params)
-        expect(transaction_double).to have_received(:verify!)
+        expect(AntiFraudService).to have_received(:call)
+        expect(transaction_double).to have_received(:update).twice
         expect(transaction_double).to have_received(:verified?)
-        expect(transaction_double).to have_received(:process!).with(successful_response)
         expect(result).to eq(successful_response)
       end
     end
 
     context "when transaction verification fails" do
-      let(:transaction_double) { instance_double("Transaction",
-                                                 verify!: { status: "failed", message: "Blocked by AF" },
-                                                 verified?: false,
-                                                 process!:  nil) }
+      let(:transaction_double) { instance_double("Transaction", verified?: false, update: nil) }
       let(:amount) { 100 }
+
+      before { allow(AntiFraudService).to receive(:call).and_return({ status: "failed", message: "Blocked by AF" }) }
 
       it "returns verification response without calling acquirer" do
         result = subject
 
-        expect(transaction_double).to have_received(:verify!)
-        expect(transaction_double).not_to have_received(:process!)
+        expect(transaction_double).to have_received(:update).once
+        expect(AntiFraudService).to have_received(:call)
         expect(result).to eq({ status: "failed", message: "Blocked by AF" })
       end
     end
 
-    context "acquirer_processing! returns declined" do
-      let(:transaction_double) { instance_double("Transaction",
-                                                 verify!: { status: "verified" },
-                                                 verified?: true,
-                                                 process!:  nil) }
+    context "processing returns declined" do
+      let(:transaction_double) { instance_double("Transaction", id: 1, verified?: true, update: nil) }
       let(:amount) { 3000 }
+
+      before { allow(AntiFraudService).to receive(:call).and_return({ status: "verified" }) }
 
       it "returns declined response when amount is 3000" do
         result = subject
@@ -60,12 +58,11 @@ RSpec.describe ProcessingService do
       end
     end
 
-    context "acquirer_processing! returns failed" do
-      let(:transaction_double) { instance_double("Transaction",
-                                                 verify!: { status: "verified" },
-                                                 verified?: true,
-                                                 process!:  nil) }
+    context "processing returns failed" do
+      let(:transaction_double) { instance_double("Transaction", id: 1, verified?: true, update: nil) }
       let(:amount) { 999 }
+
+      before { allow(AntiFraudService).to receive(:call).and_return({ status: "verified" }) }
 
       it "returns failed response for other amounts" do
         result = subject
