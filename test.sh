@@ -16,6 +16,8 @@ run_command() {
 }
 
 run_command "Brakeman" "bundle exec brakeman"
+run_command "Importmap" "bin/importmap audit"
+run_command "Bundle-audit" "bundle-audit"
+run_command "Cucumber" "bundle exec cucumber"
 run_command "Rubocop" "bundle exec rubocop"
 run_command "RSpec" "bundle exec rspec"
-run_command "Cucumber" "bundle exec cucumber"
