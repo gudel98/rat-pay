@@ -42,5 +42,18 @@ RSpec.describe PaymentsController, type: :controller do
         expect(flash[:notice]).to eq("Payment processed")
       end
     end
+
+    context "with invalid currency" do
+      let(:payment_params) { { amount: "2000", currency: "XXX" } }
+
+      it "returns invalid_currency response" do
+        post :create, params: payment_params, format: :turbo_stream
+
+        expect(ProcessingService).not_to have_received(:call).with(permitted_params)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).not_to render_template("payments/result")
+      end
+    end
   end
 end

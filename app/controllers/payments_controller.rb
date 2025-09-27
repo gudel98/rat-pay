@@ -1,4 +1,6 @@
 class PaymentsController < ApplicationController
+  before_action :validate_currency, only: :create
+
   def new
   end
 
@@ -12,6 +14,12 @@ class PaymentsController < ApplicationController
   end
 
   private
+
+  def validate_currency
+    Money::Currency.new(params[:currency])
+  rescue Money::Currency::UnknownCurrency
+    head :unprocessable_entity
+  end
 
   def payment_params
     params.permit(:amount, :currency)
