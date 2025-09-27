@@ -32,4 +32,34 @@ RSpec.describe Transaction, type: :model do
       expect(pending_txn.verified?).to be false
     end
   end
+
+  describe "#successful?" do
+    let(:successful_txn) { build(:transaction, status: "successful") }
+    let(:pending_txn)  { build(:transaction, status: "pending") }
+
+    it "returns true if status is 'successful'" do
+      expect(successful_txn.successful?).to be true
+    end
+
+    it "returns false otherwise" do
+      expect(pending_txn.successful?).to be false
+    end
+  end
+
+  describe "successful scope" do
+    let!(:successful_txn) { create(:transaction, status: "successful") }
+
+    it "returns successful txns only" do
+      expect(Transaction.successful.first).to eq(successful_txn)
+    end
+  end
+
+  describe "failed scope" do
+    let!(:declined_txn)  { create(:transaction, status: "declined") }
+    let!(:failed_txn)  { create(:transaction, status: "failed") }
+
+    it "returns declined and failed txns" do
+      expect(Transaction.failed.count).to eq(2)
+    end
+  end
 end
