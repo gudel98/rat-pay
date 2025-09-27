@@ -93,6 +93,7 @@ jobs:
   docker_image_scan:
     name: Docker Image Scan
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
 
     steps:
     - name: Checkout code
