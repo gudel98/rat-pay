@@ -1,4 +1,5 @@
 require "rails_helper"
+require "memory_profiler"
 
 RSpec.describe ProcessingService do
   let(:params) { { amount: amount, currency: "EUR" } }
@@ -21,8 +22,9 @@ RSpec.describe ProcessingService do
 
   subject do
     described_class.new.call(params) do |m|
-      m.success do |successful_response|
-        successful_response
+      m.failure :validate_currency do |exception|
+        Rails.logger.error "#{exception.message}\nCurrency: #{params[:currency]}"
+        { status: "failed", message: "Invalid currency code: #{params[:currency]}" }
       end
 
       m.failure :create_txn do |exception|
@@ -30,9 +32,8 @@ RSpec.describe ProcessingService do
         { status: "failed", message: "Transaction cannot be created: #{exception.message}" }
       end
 
-      m.failure do |failed_response|
-        failed_response
-      end
+      m.failure { |failed_response| failed_response }
+      m.success { |successful_response| successful_response }
     end
   end
 
@@ -69,6 +70,16 @@ RSpec.describe ProcessingService do
         expect(transaction_double).to have_received(:update).twice
         expect(transaction_double).to have_received(:verified?)
         expect(result).to include(successful_response)
+      end
+
+      context "when monitoring memory leaks and allocations" do
+        let(:threshold) { 1_048_576 } # 1 Mb
+
+        it 'does not bloat memory' do
+          report = MemoryProfiler.report { subject }
+          # report.pretty_print(to_file: 'log/memory_report.txt', scale_bytes: true)
+          expect(report.total_allocated_memsize).to be < threshold
+        end
       end
     end
 

@@ -260,6 +260,7 @@ GEM
     marcel (1.1.0)
     matrix (0.4.3)
     memoist3 (1.0.0)
+    memory_profiler (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
@@ -527,6 +528,7 @@ DEPENDENCIES
   kamal
   karafka
   karafka-testing
+  memory_profiler
   money
   pg (~> 1.1)
   propshaft
