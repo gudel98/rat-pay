@@ -145,6 +145,24 @@ GEM
     diff-lcs (1.6.2)
     dotenv (3.1.8)
     drb (2.2.3)
+    dry-core (1.1.0)
+      concurrent-ruby (~> 1.0)
+      logger
+      zeitwerk (~> 2.6)
+    dry-events (1.1.0)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 1.1)
+    dry-matcher (1.0.0)
+      dry-core (~> 1.0, < 2)
+    dry-monads (1.9.0)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
+    dry-transaction (0.16.0)
+      dry-core (~> 1.0)
+      dry-events (~> 1.0)
+      dry-matcher (~> 1.0)
+      dry-monads (~> 1.6)
     ed25519 (1.4.0)
     erb (5.0.2)
     erubi (1.13.1)
@@ -242,10 +260,13 @@ GEM
     marcel (1.1.0)
     matrix (0.4.3)
     memoist3 (1.0.0)
+    memory_profiler (1.1.0)
     method_source (1.1.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (5.25.5)
+    money (6.19.0)
+      i18n (>= 0.6.4, <= 2)
     msgpack (1.8.0)
     multi_test (1.1.0)
     net-imap (0.5.10)
@@ -500,12 +521,15 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   debug
+  dry-transaction
   factory_bot_rails
   importmap-rails
   jbuilder
   kamal
   karafka
   karafka-testing
+  memory_profiler
+  money
   pg (~> 1.1)
   propshaft
   pry
