@@ -7,7 +7,9 @@ class Transaction < ApplicationRecord
   scope :successful, -> { where(status: "successful") }
   scope :failed,     -> { where(status: %w[declined failed]) }
 
-  def verified?
-    status == "verified"
+  %w[verified successful].each do |method_name|
+    define_method("#{method_name}?") do
+      status == method_name
+    end
   end
 end

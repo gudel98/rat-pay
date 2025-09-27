@@ -33,6 +33,19 @@ RSpec.describe Transaction, type: :model do
     end
   end
 
+  describe "#successful?" do
+    let(:successful_txn) { build(:transaction, status: "successful") }
+    let(:pending_txn)  { build(:transaction, status: "pending") }
+
+    it "returns true if status is 'successful'" do
+      expect(successful_txn.successful?).to be true
+    end
+
+    it "returns false otherwise" do
+      expect(pending_txn.successful?).to be false
+    end
+  end
+
   describe "successful scope" do
     let!(:successful_txn) { create(:transaction, status: "successful") }
 
