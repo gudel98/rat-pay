@@ -1,9 +1,10 @@
+require "money"
 require "dry/transaction"
 
 class ProcessingService
   include Dry::Transaction
 
-  try  :validate_currency, catch: Money::Currency::UnknownCurrency
+  try  :validate_currency, catch: ::Money::Currency::UnknownCurrency
   try  :create_txn,        catch: ActiveRecord::RecordInvalid
   step :verify
   step :process
@@ -12,7 +13,7 @@ class ProcessingService
   private
 
   def validate_currency(params)
-    Money::Currency.new(params[:currency])
+    ::Money::Currency.new(params[:currency])
     params
   end
 
