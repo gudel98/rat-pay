@@ -7,7 +7,7 @@ gem "puma", ">= 5.0"
 gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
-gem "tailwindcss-rails", "~> 3.3.1"
+gem "tailwindcss-rails"
 gem "jbuilder"
 gem "money"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
