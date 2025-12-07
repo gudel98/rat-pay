@@ -1,4 +1,3 @@
-require "money"
 require "dry/transaction"
 
 class ProcessingService
