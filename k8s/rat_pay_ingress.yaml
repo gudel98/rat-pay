@@ -7,10 +7,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - rat-pay.local
+        - rat-pay.online
       secretName: rails-tls
   rules:
-    - host: rat-pay.local
+    - host: rat-pay.online
       http:
         paths:
           - path: /

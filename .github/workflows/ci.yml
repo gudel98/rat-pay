@@ -115,4 +115,4 @@ jobs:
       uses: docker/scout-action@v1.18.2
       with:
         command: quickview,cves
-        only-severities: critical,high, medium
+        only-severities: critical,high,medium

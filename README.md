@@ -26,33 +26,22 @@ minikube dashboard
 ```
 
 #### 3. Secrets:
-- Generate TLS certificates (self-signed for demo) or setup existing certificates signed by trusted CA.
 - Setup DB password and rails secret key.
 ```bash
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout rails-tls.key -out rails-tls.crt -subj "/CN=localhost"
-mv rails-tls.* k8s/secrets/ingress_tls_certs/
 cp k8s/secrets.yaml.example k8s/secrets.yaml
 # [Setup rails_secret_key, db_password and tls_certificates]
-minikube kubectl -- apply k8s/secrets.yaml
 ```
 
 #### 4. Build a docker image:
 ```bash
 docker build -t rat_pay_app:latest .
+minikube image load rat_pay_app:latest
 ```
 
 #### 5. Apply k8s manifests:
 ```bash
-minikube kubectl -- apply k8s/postgres.yaml
-minikube kubectl -- apply k8s/rat_pay_config.yaml
-minikube kubectl -- apply k8s/rat_pay_app.yaml
-minikube kubectl -- apply k8s/rat_pay_app_ingress.yaml
-minikube kubectl -- apply k8s/kafka.yaml
+kubectl apply -R -f k8s/
 ```
 
 #### 6. Visit RatPay payment page:
-```bash
-echo "$(minikube ip) rat-pay.local" | sudo tee -a /etc/hosts
-# [Visit https://rat-pay.local]
-```
-https://rat-pay.local
+https://rat-pay.online/up
