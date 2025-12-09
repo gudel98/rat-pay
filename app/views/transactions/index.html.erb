@@ -1,0 +1,67 @@
+<div class="w-full flex items-center justify-center bg-gray p-6">
+  <div class="w-full max-w-5xl">
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <h1 class="text-3xl font-semibold mb-6 text-gray-800">Transactions</h1>
+
+      <% if @transactions.any? %>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr class="border-b-2 border-gray-200">
+                <% %w[ID Amount Status Created\ At].each do |column| %>
+                  <th class="text-center py-4 px-4 text-base font-semibold text-gray-700 uppercase tracking-wider"><%= column %></th>
+                <% end %>
+              </tr>
+            </thead>
+            <tbody>
+              <% @transactions.each do |transaction| %>
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td class="py-4 px-4 text-gray-800 font-mono text-lg text-center">#<%= transaction.id %></td>
+                  <td class="py-4 px-4 text-gray-800 font-semibold text-lg text-center">
+                    <%= sprintf("%.2f", transaction.amount / 100.0) %> <%= transaction.currency %>
+                  </td>
+                  <td class="py-4 px-4 text-center">
+                    <% case transaction.status %>
+                    <% when "successful" %>
+                      <span class="flex items-center justify-center w-fit mx-auto px-3 py-1 rounded-full text-lg font-medium bg-green-100 text-green-800 whitespace-nowrap">
+                        <svg class="mr-2 flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5 13l4 4L19 7" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Successful
+                      </span>
+                    <% when "declined" %>
+                      <span class="flex items-center justify-center w-fit mx-auto px-3 py-1 rounded-full text-lg font-medium bg-red-100 text-red-800 whitespace-nowrap">
+                        <svg class="mr-2 flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M6 18L18 6M6 6l12 12" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Declined
+                      </span>
+                    <% when "failed" %>
+                      <span class="flex items-center justify-center w-fit mx-auto px-3 py-1 rounded-full text-lg font-medium bg-red-100 text-red-800 whitespace-nowrap">
+                        <svg class="mr-2 flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Failed
+                      </span>
+                    <% else %>
+                      <span class="flex items-center justify-center w-fit mx-auto px-3 py-1 rounded-full text-lg font-semibold bg-gray-100 text-gray-800 whitespace-nowrap">
+                        <%= transaction.status.capitalize %>
+                      </span>
+                    <% end %>
+                  </td>
+                  <td class="py-4 px-4 text-gray-600 text-lg text-center">
+                    <%= transaction.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-12">
+          <p class="text-gray-500 text-lg">No transactions found.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
