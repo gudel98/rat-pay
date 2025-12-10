@@ -17,7 +17,8 @@ RSpec.describe ProcessingService do
 
   before do
     allow_any_instance_of(described_class).to receive(:sleep) # fast specs
-    allow_any_instance_of(WaterDrop::Producer).to receive(:produce_sync)
+    allow_any_instance_of(WaterDrop::Producer).to receive(:produce_async)
+    allow(ProcessingWorker).to receive(:perform_async)
   end
 
   subject do
@@ -58,7 +59,7 @@ RSpec.describe ProcessingService do
       let(:amount) { 2000 }
       let(:verified?) { true }
       let(:successful?) { true }
-      let(:successful_response) { { status: "successful", message: "Transaction complete." } }
+      let(:pending_response) { { status: "pending", message: "Transaction is pending." } }
 
       before { allow(AntiFraudService).to receive(:call).and_return({ status: "verified" }) }
 
@@ -69,7 +70,7 @@ RSpec.describe ProcessingService do
         expect(AntiFraudService).to have_received(:call)
         expect(transaction_double).to have_received(:update).twice
         expect(transaction_double).to have_received(:verified?)
-        expect(result).to include(successful_response)
+        expect(result).to include(pending_response)
       end
 
       context "when monitoring memory leaks and allocations" do
@@ -103,13 +104,14 @@ RSpec.describe ProcessingService do
       let(:amount) { 3000 }
       let(:verified?) { true }
       let(:successful?) { false }
+      let(:pending_response) { { status: "pending", message: "Transaction is pending." } }
 
       before { allow(AntiFraudService).to receive(:call).and_return({ status: "verified" }) }
 
-      it "returns declined response when amount is 3000" do
+      it "returns pending response when amount is 3000" do
         result = subject
 
-        expect(result).to include({ status: "declined", message: "Transaction declined: Insufficient funds." })
+        expect(result).to include(pending_response)
       end
     end
 
@@ -117,13 +119,14 @@ RSpec.describe ProcessingService do
       let(:amount) { 999 }
       let(:verified?) { true }
       let(:successful?) { false }
+      let(:pending_response) { { status: "pending", message: "Transaction is pending." } }
 
       before { allow(AntiFraudService).to receive(:call).and_return({ status: "verified" }) }
 
-      it "returns failed response for other amounts" do
+      it "returns pending response for other amounts" do
         result = subject
 
-        expect(result).to include({ status: "failed", message: "Transaction failed: Processing error." })
+        expect(result).to include(pending_response)
       end
     end
   end
