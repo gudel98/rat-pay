@@ -6,3 +6,4 @@ data:
   DATABASE_HOST: postgres
   DATABASE_NAME: rat_pay
   DATABASE_USER: rat_user
+  REDIS_URL: redis://redis:6379/0
