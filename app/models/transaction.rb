@@ -1,7 +1,7 @@
 class Transaction < ApplicationRecord
   SUPPORTED_CURRENCIES = %w[USD EUR GBP]
 
-  validates :amount,   presence: true, comparison: { greater_than: 0 }
+  validates :amount,   presence: true, comparison: { greater_than: 0, less_than_or_equal_to: 1_000_000_00 }
   validates :currency, presence: true, inclusion:  { in: SUPPORTED_CURRENCIES, message: "is not supported." }
 
   scope :successful, -> { where(status: "successful") }
