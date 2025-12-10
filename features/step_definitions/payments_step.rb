@@ -34,12 +34,12 @@ end
 Then %r{user should see transactions table} do
   expect(page).to have_css("table")
   expect(page).to have_content("ID")
-  expect(page).to have_content("AMOUNT")
-  expect(page).to have_content("STATUS")
-  expect(page).to have_content("CREATED AT")
+  expect(page.body).to match("Amount")
+  expect(page.body).to match("Status")
+  expect(page.body).to match("Created At")
 end
 
-Then %r{user should see transaction details including ID, amount, currency, status, and created date} do
+Then %r{user should see transaction details including amount, currency} do
   expect(page).to have_content("#")
   expect(page).to have_content("EUR")
   expect(page).to have_content("USD")

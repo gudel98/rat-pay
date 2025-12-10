@@ -21,7 +21,7 @@ Feature:
    Given there are transactions in the database
     When user visits transactions page
     Then user should see transactions table
-     And user should see transaction details including ID, amount, currency, status, and created date
+     And user should see transaction details including amount, currency
 
   Scenario: transactions are displayed in descending order
    Given there are transactions in the database
