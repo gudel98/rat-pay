@@ -12,4 +12,8 @@ class Transaction < ApplicationRecord
       status == method_name
     end
   end
+
+  def finalized?
+    %w[successful declined failed].include?(status)
+  end
 end

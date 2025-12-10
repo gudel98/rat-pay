@@ -4,11 +4,14 @@ class ProcessingWorker
 
   def perform(transaction_id)
     @transaction = Transaction.find(transaction_id)
-    response = acquirer_processing!
-    @transaction.update(status: response[:status])
 
-    Rails.logger.info "[ProcessingWorker] Transaction ##{@transaction.id} processed. Status: #{response[:status]}."
-    broadcast_status(response)
+    unless @transaction.finalized?
+      response = acquirer_processing!
+      @transaction.update(status: response[:status])
+
+      Rails.logger.info "[ProcessingWorker] Transaction ##{@transaction.id} processed. Status: #{response[:status]}."
+      broadcast_status(response)
+    end
   rescue ActiveRecord::RecordNotFound => error
     Rails.logger.error "[ProcessingWorker] Transaction ##{@transaction.id} not found."
   end
@@ -34,7 +37,7 @@ class ProcessingWorker
         transaction: @transaction,
         response: response.merge(transaction: @transaction)
       },
-      formats: [:turbo_stream]
+      formats: [ :turbo_stream ]
     )
   end
 end

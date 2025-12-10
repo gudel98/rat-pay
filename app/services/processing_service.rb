@@ -28,8 +28,8 @@ class ProcessingService
   end
 
   def process(transaction)
-    ProcessingWorker.perform_async(transaction.id)
     transaction.update(status: pending_response[:status])
+    ProcessingWorker.perform_async(transaction.id)
 
     Success(pending_response.merge(transaction: transaction))
   end
