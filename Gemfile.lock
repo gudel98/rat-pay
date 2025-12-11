@@ -382,6 +382,8 @@ GEM
       erb
       psych (>= 4.0.0)
       tsort
+    redis-client (0.26.2)
+      connection_pool
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -445,6 +447,12 @@ GEM
       websocket (~> 1.0)
     shoulda-matchers (7.0.1)
       activesupport (>= 7.1)
+    sidekiq (8.0.10)
+      connection_pool (>= 2.5.0)
+      json (>= 2.9.0)
+      logger (>= 1.6.2)
+      rack (>= 3.1.0)
+      redis-client (>= 0.23.2)
     solid_cable (3.0.12)
       actioncable (>= 7.2)
       activejob (>= 7.2)
@@ -554,6 +562,7 @@ DEPENDENCIES
   rubocop-rails-omakase
   selenium-webdriver
   shoulda-matchers
+  sidekiq
   solid_cable
   solid_cache
   solid_queue

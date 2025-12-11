@@ -1,20 +1,10 @@
-<div id="txn_modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-  <div class="bg-white w-96 p-6 rounded-lg relative shadow-xl flex flex-col items-center space-y-4">
-    
-    <% if @response[:status] == 'successful' %>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-      </svg>
-    <% else %>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-      </svg>
-    <% end %>
-
-    <p class="text-center text-gray-800 text-lg font-medium"><%= @response[:message] %></p>
-
-    <button id="close-button" data-controller="modal" data-action="click->modal#close" class="close-button">
-      Close
-    </button>
+<% if @transaction %>
+  <%= turbo_stream_from @transaction %>
+  <div id="<%= dom_id(@transaction, :modal) %>" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <%= render partial: "payments/status", locals: { transaction: @transaction, response: @response } %>
   </div>
-</div
+<% else %>
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <%= render partial: "payments/status", locals: { transaction: nil, response: @response } %>
+  </div>
+<% end %>

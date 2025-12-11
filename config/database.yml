@@ -4,11 +4,19 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
-  <<: *default
-  host: 127.0.0.1
-  database: rat_pay_app_development
-  username: rat_pay
-  password: rat_password
+  primary:
+    <<: *default
+    host: 127.0.0.1
+    database: rat_pay_app_development
+    username: rat_pay
+    password: rat_password
+  cable:
+    <<: *default
+    host: 127.0.0.1
+    database: rat_pay_app_development
+    username: rat_pay
+    password: rat_password
+    migrations_paths: db/cable_migrate
 
 test:
   <<: *default

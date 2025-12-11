@@ -28,16 +28,16 @@ class ProcessingService
   end
 
   def process(transaction)
-    processing_response = acquirer_processing(transaction)
-    transaction.update(status: processing_response[:status])
+    transaction.update(status: pending_response[:status])
+    ProcessingWorker.perform_async(transaction.id)
 
-    Success(processing_response.merge(transaction: transaction))
+    Success(pending_response.merge(transaction: transaction))
   end
 
   def notify(response)
     transaction = response[:transaction]
     Rails.logger.info "Enqueueing payment #{transaction.id} to Kafka..."
-    $waterdrop_producer.produce_sync(
+    $waterdrop_producer.produce_async(
       payload: { id: transaction.id, amount: transaction.amount, currency: transaction.currency }.to_json,
       topic: "payments"
     )
@@ -46,13 +46,7 @@ class ProcessingService
     Rails.logger.error "Failed to produce to Kafka: #{error.message}"
   end
 
-  def acquirer_processing(transaction)
-    sleep 0.5 # emulate communication with acquirer
-
-    case transaction.amount
-    when 2000 then { status: "successful", message: "Transaction complete." }
-    when 3000 then { status: "declined", message: "Transaction declined: Insufficient funds." }
-    else           { status: "failed", message: "Transaction failed: Processing error." }
-    end
+  def pending_response
+    { status: "pending", message: "Transaction is pending." }
   end
 end

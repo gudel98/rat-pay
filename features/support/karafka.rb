@@ -10,7 +10,7 @@ Before do
   Karafka::App.config.kafka[:seed_brokers] = []
   Karafka::App.config.consumer_persistence = false
 
-  allow_any_instance_of(WaterDrop::Producer).to receive(:produce_sync).and_return(true)
+  allow_any_instance_of(WaterDrop::Producer).to receive(:produce_async).and_return(true)
 end
 
 After do
