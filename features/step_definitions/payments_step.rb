@@ -14,7 +14,8 @@ When %r{customer selects (Medium|Large|XXL) pizza size and clicks on "(.+)"} do 
 end
 
 Then %r{transaction is (successful|declined|failed)} do |status|
-  expect(Transaction.first.reload.status).to eq(status)
+  sleep 1 # wait for the transaction to be processed
+  expect(Transaction&.first&.reload&.status).to eq(status)
 end
 
 Given %r{there are transactions in the database} do
