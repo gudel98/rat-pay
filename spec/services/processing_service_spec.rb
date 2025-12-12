@@ -1,5 +1,6 @@
 require "rails_helper"
 require "memory_profiler"
+require "ostruct"
 
 RSpec.describe ProcessingService do
   let(:params) { { amount: amount, currency: "EUR" } }
@@ -9,6 +10,8 @@ RSpec.describe ProcessingService do
       id: 1,
       verified?: verified?,
       successful?: successful?,
+      reload: OpenStruct.new(id: 1, status: 'successful'),
+      finalized?: true,
       update: nil,
       amount: amount,
       currency: "EUR"
@@ -69,6 +72,7 @@ RSpec.describe ProcessingService do
         expect(Transaction).to have_received(:create!).with(params)
         expect(AntiFraudService).to have_received(:call)
         expect(transaction_double).to have_received(:update).twice
+        expect(transaction_double).to have_received(:reload)
         expect(transaction_double).to have_received(:verified?)
         expect(result).to include(pending_response)
       end

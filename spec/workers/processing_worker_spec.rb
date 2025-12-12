@@ -6,7 +6,9 @@ RSpec.describe ProcessingWorker, type: :worker do
   let(:transaction) { create(:transaction, amount: amount, status: "pending") }
 
   before do
+    allow_any_instance_of(described_class).to receive(:sleep) # skip processing sleep
     allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to)
+    allow_any_instance_of(WaterDrop::Producer).to receive(:produce_async)
   end
 
   shared_examples "broadcasts status" do |expected_status|
@@ -39,8 +41,21 @@ RSpec.describe ProcessingWorker, type: :worker do
     include_examples "broadcasts status", "declined"
   end
 
-  context "when amount is other (failed)" do
-    let(:amount) { 1500 }
-    include_examples "broadcasts status", "failed"
+  context "when amount is other (processing error with retry)" do
+    let(:amount) { 4000 }
+
+    it "retries and eventually fails calling the exhausted hook" do
+      expect {
+        described_class.new.perform(transaction.id)
+      }.to raise_error(ProcessingWorker::ProcessingError)
+
+      # Sidekiq::Testing doesn't run the full retry lifecycle automatically
+      described_class.sidekiq_retries_exhausted_block.call(
+        { "args" => [transaction.id] },
+        ProcessingWorker::ProcessingError.new("Temporary processing failure")
+      )
+
+      expect(transaction.reload.status).to eq("failed")
+    end
   end
 end

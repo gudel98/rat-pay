@@ -35,13 +35,18 @@ class ProcessingService
   end
 
   def notify(response)
-    transaction = response[:transaction]
-    Rails.logger.info "Enqueueing payment #{transaction.id} to Kafka..."
+    transaction = response[:transaction].reload
+    Rails.logger.info "Enqueueing #{transaction.status} payment #{transaction.id} to Kafka..."
     $waterdrop_producer.produce_async(
-      payload: { id: transaction.id, amount: transaction.amount, currency: transaction.currency }.to_json,
+      payload: {
+        id: transaction.id,
+        status: transaction.status,
+        amount: transaction.amount,
+        currency: transaction.currency
+      }.to_json,
       topic: "payments"
     )
-    Rails.logger.info "Enqueued payment #{transaction.id} to Kafka."
+    Rails.logger.info "Enqueued #{transaction.status} payment #{transaction.id} to Kafka."
   rescue StandardError => error
     Rails.logger.error "Failed to produce to Kafka: #{error.message}"
   end
