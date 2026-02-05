@@ -274,7 +274,7 @@ GEM
     mini_portile2 (2.8.9)
     minitest (6.0.1)
       prism (~> 1.5)
-    money (7.0.0)
+    money (7.0.2)
       bigdecimal
       i18n (~> 1.9)
     msgpack (1.8.0)
