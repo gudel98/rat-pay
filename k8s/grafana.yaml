@@ -36,6 +36,12 @@ spec:
       containers:
       - name: grafana
         image: grafana/grafana
+        env:
+          - name: GF_SECURITY_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: grafana-password
+                key: GRAFANA_PASSWORD
         ports:
         - containerPort: 3000
         volumeMounts:
