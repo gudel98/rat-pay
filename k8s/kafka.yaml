@@ -53,7 +53,7 @@ spec:
       volumes:
         - name: kafka-data
           persistentVolumeClaim:
-            claimName: kafka-pvc
+            claimName: kafka-pvc-v2
 ---
 apiVersion: v1
 kind: Service
@@ -75,7 +75,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: kafka-pvc
+  name: kafka-pvc-v2
 spec:
   accessModes:
     - ReadWriteOnce
