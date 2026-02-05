@@ -45,14 +45,31 @@ spec:
         ports:
         - containerPort: 3000
         volumeMounts:
+        - name: grafana-pvc
+          mountPath: /var/lib/grafana
         - name: grafana-datasources
           mountPath: /etc/grafana/provisioning/datasources
           readOnly: true
       volumes:
+      - name: grafana-pvc
+        persistentVolumeClaim:
+          claimName: grafana-pvc
       - name: grafana-datasources
         configMap:
           defaultMode: 420
           name: grafana-datasources
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 512Mi
+  storageClassName: standard
 ---
 apiVersion: v1
 kind: Service
