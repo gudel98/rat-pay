@@ -112,7 +112,7 @@ jobs:
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
     - name: Docker Scout Scan
-      uses: docker/scout-action@v1.18.2
+      uses: docker/scout-action@v1.20.2
       with:
         command: quickview,cves
         only-severities: critical,high,medium
